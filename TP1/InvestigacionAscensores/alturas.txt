@@ -1,0 +1,3 @@
+Una vivienda de un piso tendrá una altura interior de 2.30 a 2.50 metros aproximadamente.
+
+http://hyperphysics.phy-astr.gsu.edu/hbasees/elev.html para calcular F y m de los ascensores en la imagen descargada.
