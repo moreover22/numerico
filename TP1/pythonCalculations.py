@@ -3,45 +3,46 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-F = 900
-m = 475
+def polinomio(coeficientes):
+    return lambda x: sum([coeficiente * x ** i for i, coeficiente in enumerate(coeficientes)])
 
-A = 0
-B = 9
+def graficar(secs, a_values, v_values, x_values):
+	plt.plot(secs, a_values, label='Aceleración')
+	plt.plot(secs, v_values, label='Velocidad')
+	plt.plot(secs, x_values, label='Posición')
+	plt.legend()
+	plt.xlabel('Tiempo')
+	plt.title('Gráfico de funciones aceleración, velocidad y posición')
+	plt.show()
 
-xO = 0
+def evaluar_funciones(secs, a, v, x):
+	return list(map(a, secs)), list(map(v, secs)), list(map(x, secs))
 
-tf = math.sqrt((6 * (B - A) * m) / F)
+def main():
+	F = 900
+	n = 4
+	m_personas = 75
+	m_cabina = 100
+	m = n * m_personas + m_cabina
+	A, B = (0, 9)
+	F_m = F / m
 
-a = lambda t: (F / m) - 2 * (F / (m * tf)) * t
-v = lambda t: (F / m) * t - (F/(m * tf))* t ** 2
-x = lambda t: xO + (F / (2 * m)) * t ** 2 - (F / (3 * m * tf)) * t ** 3
+	tf = math.sqrt((6 * (B - A) * m) / F)
+	a = polinomio([F_m, - 2 * (F_m / tf)])
+	v = polinomio([0, F_m, - F_m / tf])
+	x = polinomio([A, 0, F_m / 2, - (F_m / (3 * tf))])
 
-secs = np.arange(0, 9, 0.5)
-
-
-a_values = ()
-v_values = ()
-x_values = ()
-
-print("aceleración")
-a_values = list(map(a, secs))
-print(a_values)
-
-
-print("velocidad")
-v_values = list(map(v, secs))
-print(v_values)
+	secs = np.arange(0, tf, 0.25)
+	a_values, v_values, x_values = evaluar_funciones(secs, a, v, x)
+	
+	print("aceleración")
+	print(a_values)
+	print("velocidad")
+	print(v_values)
+	print("posición")
+	print(x_values)
+	
+	graficar(secs, a_values, v_values, x_values)
 
 
-print("posición")
-x_values = list(map(x, secs))
-print(x_values)
-
-plt.plot(secs, a_values, label='Aceleración')
-plt.plot(secs, v_values, label='Velocidad')
-plt.plot(secs, x_values, label='Posición')
-plt.legend()
-plt.xlabel('Tiempo')
-plt.title('Gráfico de funciones aceleración, velocidad y posición')
-plt.show()
+main()
