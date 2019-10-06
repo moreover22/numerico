@@ -22,7 +22,7 @@ def biseccion(f, intervalo, tolerancia=1e-2, max_iteracion=100):
     a, b = intervalo
     p = punto_medio(a, b)
     
-    for iteracion in range(max_iteracion):
+    for iteracion in range(max_iteracion - 1):
         historial.append((iteracion + 1, a, b, p, f(p)))
         if f(a) * f(p) < 0: b = p
         if f(p) * f(b) < 0: a = p        
