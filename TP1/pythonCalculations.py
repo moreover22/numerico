@@ -1,6 +1,6 @@
 from busquedaRaices import secante, newton_raphson, punto_fijo, biseccion
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
+import numpy as np
 import math
 
 F = 900
@@ -11,15 +11,14 @@ B = 9
 
 xO = 0
 
-tf = lambda t: math.sqrt((6 * (B - A) * m) / F)
+tf = math.sqrt((6 * (B - A) * m) / F)
 
-a = lambda t: (F / m) - 2 * (F / (m * tf(t))) * t
-v = lambda t: (F / m) * t - (F/(m * tf(t)))* t ** 2
-x = lambda t: xO + (F/2*m) * t ** 2 - (F / (3 * m * tf(t))) * t ** 3
+a = lambda t: (F / m) - 2 * (F / (m * tf)) * t
+v = lambda t: (F / m) * t - (F/(m * tf))* t ** 2
+x = lambda t: xO + (F / (2 * m)) * t ** 2 - (F / (3 * m * tf)) * t ** 3
 
+secs = np.arange(0, 9, 0.5)
 
-
-secs = [0, 0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9]
 
 a_values = ()
 v_values = ()
@@ -39,10 +38,10 @@ print("posición")
 x_values = list(map(x, secs))
 print(x_values)
 
-plt.plot(secs,a_values, label = "aceleración")
-plt.plot(secs,v_values, label = "velocidad")
-plt.plot(secs,x_values, label = "posición")
+plt.plot(secs, a_values, label='Aceleración')
+plt.plot(secs, v_values, label='Velocidad')
+plt.plot(secs, x_values, label='Posición')
 plt.legend()
 plt.xlabel('Tiempo')
-plt.title('Grafico de funciones de aceleración, velocidad y posición')
+plt.title('Gráfico de funciones aceleración, velocidad y posición')
 plt.show()
