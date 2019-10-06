@@ -1,5 +1,6 @@
 from busquedaRaices import secante, newton_raphson, punto_fijo, biseccion
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import math
 
 F = 900
@@ -38,5 +39,10 @@ print("posición")
 x_values = list(map(x, secs))
 print(x_values)
 
-plt.plot(a_values, v_values, x_values)
+plt.plot(secs,a_values, label = "aceleración")
+plt.plot(secs,v_values, label = "velocidad")
+plt.plot(secs,x_values, label = "posición")
+plt.legend()
+plt.xlabel('Tiempo')
+plt.title('Grafico de funciones de aceleración, velocidad y posición')
 plt.show()
