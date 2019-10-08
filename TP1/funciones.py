@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+from busquedaRaices import newton_raphson, biseccion
 
 def polinomio(coeficientes):
     return lambda x: sum([coeficiente * x ** i for i, coeficiente in enumerate(coeficientes)])
@@ -8,9 +9,9 @@ def polinomio(coeficientes):
 def evaluar_funciones(secs, a, v, x):
 	return list(map(a, secs)), list(map(v, secs)), list(map(x, secs))
 
-def generar_funciones():
+def generar_funciones(cantidadDePersonas):
     F = 900
-    n = 4
+    n = cantidadDePersonas
     m_personas = 75
     m_cabina = 100
     m = n * m_personas + m_cabina
@@ -33,8 +34,21 @@ def graficar(secs, a_values, v_values, x_values):
 	plt.show()
 
 
+def showTpCalculations(cantidadDePersonas):
+    tf, _, v, x = generar_funciones(cantidadDePersonas)
+
+    t_30 = 0.35 * tf # tiempo en que se alcanza 30% de aceleración
+    g = lambda t: x(t) - x(t_30)
+    Dg = v
+    semilla, _ = biseccion(g, (0, tf), max_iteracion=1)
+    pf, historial = newton_raphson(g, Dg, semilla, tolerancia=1e-4)
+    for i, p, e in historial:
+        print(f'{i:^3} | {p:^15.15f} | {e:^10.10f} |')
+    print(f'Tiempo que tarda en alcanzar el 30% de aceleración: {pf: .2f} s .')
+
+
 def main():
-    tf, a, v, x = generar_funciones()
+    tf, a, v, x = generar_funciones(4)
     secs = np.arange(0, tf, 0.25)
     a_values, v_values, x_values = evaluar_funciones(secs, a, v, x)
 
