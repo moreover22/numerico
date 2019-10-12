@@ -21,13 +21,13 @@ def biseccion(f, intervalo, tolerancia=1e-2, max_iteracion=100):
     historial = []
     a, b = intervalo
     p = punto_medio(a, b)
-    
+    historial.append((0, a, b, p, f(p)))
     for iteracion in range(max_iteracion - 1):
-        historial.append((iteracion + 1, a, b, p, f(p)))
         if f(a) * f(p) < 0: b = p
         if f(p) * f(b) < 0: a = p        
         p_anterior = p
         p = punto_medio(a, b)
+        historial.append((iteracion + 1, a, b, p, f(p)))
         if error_relativo(p, p_anterior) < tolerancia:
             break
     return p, historial
@@ -59,10 +59,12 @@ def newton_raphson(f, Df, semilla, tolerancia=1e-2, max_iteracion=100):
     """
     historial = []
     p = semilla
+    historial.append((0, p, None))
+
     for iteracion in range(max_iteracion):
         p_anterior = p
         p = p - f(p) / Df(p)
-        historial.append((iteracion + 1, p_anterior, error_relativo(p, p_anterior)))
+        historial.append((iteracion + 1, p, error_relativo(p, p_anterior)))
         if error_relativo(p, p_anterior) < tolerancia:
             break
     return p, historial
