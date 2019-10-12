@@ -1,52 +1,49 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import math
+from busquedaRaices import biseccion, newton_raphson
 
 def polinomio(coeficientes):
     return lambda x: sum([coeficiente * x ** i for i, coeficiente in enumerate(coeficientes)])
 
-def evaluar_funciones(secs, a, v, x):
-	return list(map(a, secs)), list(map(v, secs)), list(map(x, secs))
+def generar_funciones(n_personas=6):
+    MASA_PERSONA = 75
+    m_cabina = 400
+    m = n_personas * MASA_PERSONA + m_cabina
 
-def generar_funciones():
-    F = 900
-    n = 4
-    m_personas = 75
-    m_cabina = 100
-    m = n * m_personas + m_cabina
-    A, B = (0, 9)
+    F = 1200
+
+    n_pisos = 3
+    ALTURA_POR_PISO = 2.5
+    A, B = (0, n_pisos * ALTURA_POR_PISO)
     F_m = F / m
 
     tf = math.sqrt((6 * (B - A) * m) / F)
     a = polinomio([F_m, - 2 * (F_m / tf)])
     v = polinomio([0, F_m, - F_m / tf])
     x = polinomio([A, 0, F_m / 2, - (F_m / (3 * tf))])
-    return tf, a, v, x
-
-def graficar(secs, a_values, v_values, x_values):
-	plt.plot(secs, a_values, label='Aceleración')
-	plt.plot(secs, v_values, label='Velocidad')
-	plt.plot(secs, x_values, label='Posición')
-	plt.legend()
-	plt.xlabel('Tiempo')
-	plt.title('Gráfico de funciones aceleración, velocidad y posición')
-	plt.show()
+    g = lambda t: x(t) - 0.28175 * B
+    return tf, a, v, x, g
 
 
-def main():
-    tf, a, v, x = generar_funciones()
-    secs = np.arange(0, tf, 0.25)
-    a_values, v_values, x_values = evaluar_funciones(secs, a, v, x)
+def mostrar_historial_nr(historial):
+    print(f'{"n":^3} | {"p":^17s} | {"abs(p_n-p_n+1)":^17s}')
+    print('-' * 40)
+    print(f'{historial[0][0]:^3} | {historial[0][1]:^15.15f} | {"-":^12s} |')
+    for i, p, e in historial[1:]:
+        print(f'{i:^3} | {p:^15.15f} | {e:^10.10f} |')
 
-    print("aceleración")
-    print(a_values)
-    print("velocidad")
-    print(v_values)
-    print("posición")
-    print(x_values)
-	
-    print(f'100% ac: {a(0)}, {a(0.35 * tf)}')
-    graficar(secs, a_values, v_values, x_values)
+def mostrar_historial_biseccion(historial):
+    print(f'{"n":^3} | {"a":^7s} | {"b":^7s} | {"p":^7s} | {"f(p)":^7s} ')
+    print('-' * 40)
+    for i, a, b, p, f_p in historial:
+        print(f'{i:^3} | {a:^5.5f} | {b:^5.5f} | {p:^5.5f} | {f_p:^5.5f} ')
 
-if __name__ == "__main__":
-    main()
+def showTpCalculations(cantidadDePersonas):
+    tf, _, v, _, g = generar_funciones(cantidadDePersonas)
+    Dg = v
+    semilla, historial_biseccion = biseccion(g, (0, tf), max_iteracion=2)
+    mostrar_historial_biseccion(historial_biseccion)
+    print(f'Semilla: {semilla: .5f}.\n')
+
+    pf, historial = newton_raphson(g, Dg, semilla, tolerancia=1e-3)
+    mostrar_historial_nr(historial)
+    print(f'Tiempo hasta alcanzar el 30% de aceleración: {pf: .3f} s .')
